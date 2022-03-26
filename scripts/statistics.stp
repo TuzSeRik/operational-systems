@@ -1,0 +1,33 @@
+global fread, pwrite, fopen, fclose 
+
+probe syscall.open { 
+if (pid() == target()) { 
+fopen += 1 
+} 
+} 
+
+probe syscall.close { 
+if (pid() == target()) { 
+fclose += 1 
+} 
+} 
+
+probe syscall.pwrite { 
+if (pid() == target()) { 
+pwrite += 1 
+} 
+} 
+
+probe syscall.read { 
+if (pid() == target()) { 
+fread += 1 
+} 
+} 
+
+probe timer.ms(100) { 
+printf("%d\t%d\t%d\t%16d\n", read, write, open, close) 
+fread = 0 
+pwrite = 0 
+fopen = 0 
+fclose = 0 
+}
